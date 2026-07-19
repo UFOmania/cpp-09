@@ -10,6 +10,14 @@ int main(int ac, char **av)
     }
 
     BitcoinExchange bc;
-    bc.initDatabase(av[1]);
+    try{
+        bc.initDatabase("data.csv");
+        bc.read_input(av[1]);
+
+    }
+    catch (const std::exception & e){
+        std::cout <<"Error: "<<  e.what() << std::endl;
+        return 1;
+    }
 
 }

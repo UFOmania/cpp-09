@@ -9,20 +9,30 @@
 
 class BitcoinExchange {
     private:
-        std::map<std::string, double> _database;
-        bool _init;
-        void validateDatabaseline(const std::string & line);
-        void validateKey(const std::string &);
+    typedef struct date_s{
+        int year;
+        int month;
+        int day;
+        // public:
+        //     bool operator==(const struct date_s &);
+    } date_t;
+    
+        std::map<date_t, double> _database;
+        bool _isFirstLine;
+        void validateDatabaseLine(const std::string & line);
+        date_t validateKey(std::string &);
         double validateValue(const std::string &);
-
-
-
-    public:
+        void validateInputLine(const std::string &);
+        
+        
+        
+        public:
         ~BitcoinExchange();
         BitcoinExchange();
         BitcoinExchange(const BitcoinExchange &);
         BitcoinExchange &operator=(const BitcoinExchange &);
         void initDatabase(const char * filename);
+        void read_input(const char * filename);
 };
 
 
