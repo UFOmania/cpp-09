@@ -3,7 +3,7 @@ NAME = btc
 FLAGS = -Wall -Wextra -Werror 
 
 SRC = BitcoinExchange.cpp main.cpp
-OBJ = $(SRC:.o=.cpp)
+OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
 
@@ -11,7 +11,7 @@ $(NAME): $(OBJ)
 	c++ $(FLAGS) $(OBJ) -o $(NAME)
 
 %.o: %.cpp
-	c++ $(FLAGS) -c $@  -o $<
+	c++ $(FLAGS) -c $<  -o $@
 
 
 clean:
