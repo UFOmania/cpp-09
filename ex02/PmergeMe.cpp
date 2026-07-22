@@ -7,20 +7,28 @@ PmergeMe & PmergeMe::operator=(const PmergeMe &) {return *this;}
 
 std::vector<int> PmergeMe::_data; 
 
+int jj(int i)
+{
+    if (i == 0 || i == 1)
+        return i;
+    return jj(i - 1) + (jj(i - 2) * 2);
+}
+
 std::vector<int>  PmergeMe::jakop(int size)
 {
+
     std::vector<int> jsSequence;
+
     jsSequence.push_back(1);
     jsSequence.push_back(1);
     jsSequence.push_back(3);
 
 
-    // jsSequence.push_back(3);
     if (size < 3)
         return jsSequence;// understade
     
-    while (jsSequence.back() < size)
-        jsSequence.push_back((*(jsSequence.end() - 1)) + (*(jsSequence.end() - 2) * 2));
+    while (jsSequence.back() <= size)
+        jsSequence.push_back(*(jsSequence.end() - 1) + (*(jsSequence.end() - 2) * 2));
     
     return jsSequence;
 }
@@ -50,7 +58,13 @@ int PmergeMe::makePairs(const std::vector<int> & org, std::vector<int> & winners
 
 }
 
+void put(const std::vector<int> lst)
+{
+    for(size_t i = 0; i < lst.size(); i++)
+        std::cout << lst[i] << " ";
 
+    std::cout << std::endl;
+}
 
 std::vector<int> PmergeMe::doMergeSort(std::vector<int> & data)
 {
@@ -68,27 +82,53 @@ std::vector<int> PmergeMe::doMergeSort(std::vector<int> & data)
 
     result = doMergeSort(winners);
 
-    std::vector<int> jsSequence = jakop(loosers.size());
+    std::vector<int> jsSequence = jakop(loosers.size() + 1);
+    std::cout << "JakopStall Seq: " << jsSequence.size() << "  => ";
+    put(jsSequence);
 
 
     
-    size_t i = 0;
-    while (i < loosers.size())
+    std::cout << "loosers : "; put(loosers); 
+    int i = 0;
+    int KKK = 0;
+    while (i < (int)loosers.size())
     {
+        // std::cout <<"i -> |" << i <<"|"<< loosers.size() << std::endl;
+        // std::chrono::high_resolution_clock::time_point sss = std::chrono::high_resolution_clock::now();
         int start = i;
-        int end = i + jsSequence[i];
-        if (end >= (int)loosers.size()) end = loosers.size() - 1; // 
-        for (int j = end; j >= start; j--)
-        {
-            std::vector<int>::iterator winnerPos = std::find(result.begin(), result.end(), winners[j]);
-            std::vector<int>::iterator insertionPoint = std::lower_bound(result.begin(), winnerPos, loosers[j]);
-            
-            result.insert(insertionPoint, loosers[j]);
-
-        }
+        int end = i + jsSequence[KKK] - 1;
+        KKK += 1;
+        // std::chrono::high_resolution_clock::time_point done = std::chrono::high_resolution_clock::now();
+        
+        // std::chrono::microseconds durration = std::chrono::duration_cast<std::chrono::microseconds>(done - sss);
+        // std::cout << "time : " << durration.count() << std::endl;
+        // std::cout << "##### " << i << " + " << jsSequence[i] << " = " << end << std::endl;
+        if (end > (int)loosers.size()) end = loosers.size() - 1; // 
+        // std:: cout << "start: " << start << ", end: " << end << std::endl;
+        // std::cout << "range: ";
+        // for(int tmp = start; tmp <= end; tmp++)
+        //     std::cout << loosers[tmp] << " ";
+        // std::cout << "\n";
         
         i = end + 1;
+        while (true)
+        {
+            
+            //  std::cout <<"j -> |" << end <<"|"<< std::endl;
+            std::vector<int>::iterator winnerPos = std::find(result.begin(), result.end(), winners[end]);
+            std::vector<int>::iterator insertionPoint = std::lower_bound(result.begin(), winnerPos, loosers[end]);
+            
+            result.insert(insertionPoint, loosers[end]);
+            
+            if (end == start)
+                break;
+            end -= 1;
+            
+        }
+        
+        
     }
+    // std::cout << std::endl;
     if (leftOver != -1)
     {
         std::vector<int>::iterator insertionPoint = std::lower_bound(result.begin(), result.end(), leftOver);
