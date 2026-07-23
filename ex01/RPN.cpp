@@ -5,6 +5,10 @@ RPN::RPN(){}
 RPN::RPN(const RPN &){}
 RPN &RPN::operator=(const RPN &){return *this;}
 
+bool checkOverflow(ssize_t resultBuffer)
+{
+    return (resultBuffer > (long)__INT_MAX__ || resultBuffer < (long)-2147483648);
+}
 
 int RPN::doCalculate(const std::string & formula){
     std::stack<int> st;
@@ -17,24 +21,30 @@ int RPN::doCalculate(const std::string & formula){
             if (st.size() < 2)
                 return 0;
 
-        int right = st.top();
-        st.pop();
-                
-        int left = st.top();
-        st.pop();
-        
+            ssize_t right = st.top();
+            st.pop();
+                    
+            ssize_t left = st.top();
+            st.pop();
+
+            ssize_t resultBuffer = 0;
+            
             switch (*it)
             {
-                case '+': st.push(left + right);  break;
-                case '-': st.push(left - right);  break;
-                case '*': st.push(left * right);  break;
+                case '+': resultBuffer = left + right;  break;
+                case '-': resultBuffer = left - right;  break;
+                case '*': resultBuffer = left * right;  break;
                 case '/': 
                     if( right == 0)
                         throw std::runtime_error("division by 0");
 
-                    st.push(left / right); 
+                    resultBuffer = left / right; 
                     break;
             }
+            if (checkOverflow(resultBuffer))
+                throw std::overflow_error("result overflow");
+            
+            st.push(static_cast<int>(resultBuffer));
         }
     }
     if (st.size() != 1)

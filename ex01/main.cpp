@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+
 int main(int ac, char **av)
 {
     if(ac != 2) 
@@ -10,6 +11,7 @@ int main(int ac, char **av)
         return 1;
     }
 
+    
     RPN::calculate(av[1]);
 
 }

@@ -1,6 +1,6 @@
 NAME = btc
 
-FLAGS = -Wall -Wextra -Werror 
+FLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 
 SRC = BitcoinExchange.cpp main.cpp
 OBJ = $(SRC:.cpp=.o)
@@ -18,6 +18,6 @@ clean:
 	rm  -f $(OBJ)
 
 fclean: clean
-	rm $(NAME)
+	rm -f $(NAME)
 
 re: fclean all
