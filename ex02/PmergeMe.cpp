@@ -6,13 +6,8 @@ PmergeMe::PmergeMe(const PmergeMe &){}
 PmergeMe & PmergeMe::operator=(const PmergeMe &) {return *this;}
 
 std::vector<int> PmergeMe::_data; 
+std::deque<int> PmergeMe::_data2; 
 
-int jj(int i)
-{
-    if (i == 0 || i == 1)
-        return i;
-    return jj(i - 1) + (jj(i - 2) * 2);
-}
 
 std::vector<int>  PmergeMe::jakop(int size)
 {
@@ -25,7 +20,26 @@ std::vector<int>  PmergeMe::jakop(int size)
 
 
     if (size < 3)
-        return jsSequence;// understade
+        return jsSequence;
+    
+    while (jsSequence.back() <= size)
+        jsSequence.push_back(*(jsSequence.end() - 1) + (*(jsSequence.end() - 2) * 2));
+    
+    return jsSequence;
+}
+
+std::deque<int>  PmergeMe::jakop_deq(int size)
+{
+
+    std::deque<int> jsSequence;
+
+    jsSequence.push_back(1);
+    jsSequence.push_back(1);
+    jsSequence.push_back(3);
+
+
+    if (size < 3)
+        return jsSequence;
     
     while (jsSequence.back() <= size)
         jsSequence.push_back(*(jsSequence.end() - 1) + (*(jsSequence.end() - 2) * 2));
@@ -50,7 +64,7 @@ int PmergeMe::makePairs(const std::vector<int> & org, std::vector<int> & winners
             loosers.push_back (left < right ? left : right);
 
         }
-        else //one element
+        else
             return left;
         
     }
@@ -58,13 +72,87 @@ int PmergeMe::makePairs(const std::vector<int> & org, std::vector<int> & winners
 
 }
 
-void put(const std::vector<int> lst)
-{
-    for(size_t i = 0; i < lst.size(); i++)
-        std::cout << lst[i] << " ";
+int PmergeMe::makePairs(const std::deque<int> & org, std::deque<int> & winners, std::deque<int> & loosers){
 
-    std::cout << std::endl;
+    int left = -1, right = -1;
+    
+    for(std::deque<int>::const_iterator it = org.begin() ; it != org.end(); it++)
+    {
+        
+        left = *it;
+
+        if ((it + 1) != org.end())
+        {
+            it++;
+            right = (*it);
+            winners.push_back (left > right ? left : right);
+            loosers.push_back (left < right ? left : right);
+
+        }
+        else
+            return left;
+        
+    }
+    return -1;
+
 }
+
+std::deque<int> PmergeMe::doMergeSort(std::deque<int> & data)
+{
+    std::deque<int> result;
+    if (data.size() <= 1)
+    {
+        result = data;
+        return result;
+    }
+
+    std::deque <int> winners;
+    std::deque <int> loosers;
+
+    int leftOver = makePairs(data, winners, loosers);
+
+    result = doMergeSort(winners);
+
+    std::deque<int> jsSequence = jakop_deq(loosers.size() + 1);
+
+    int i = 0;
+    int KKK = 0;
+    while (i < (int)loosers.size())
+    {
+        int start = i;
+        int end = i + jsSequence[KKK] - 1;
+        KKK += 1;
+
+        if (end > (int)loosers.size()) end = loosers.size() - 1;
+
+        
+        i = end + 1;
+        while (true)
+        {
+
+            std::deque<int>::iterator winnerPos = std::find(result.begin(), result.end(), winners[end]);
+            std::deque<int>::iterator insertionPoint = std::lower_bound(result.begin(), winnerPos, loosers[end]);
+            
+            result.insert(insertionPoint, loosers[end]);
+            
+            if (end == start)
+                break;
+            end -= 1;
+            
+        }
+        
+        
+    }
+
+    if (leftOver != -1)
+    {
+        std::deque<int>::iterator insertionPoint = std::lower_bound(result.begin(), result.end(), leftOver);
+        result.insert(insertionPoint, leftOver);
+    }
+
+    return result;
+}
+
 
 std::vector<int> PmergeMe::doMergeSort(std::vector<int> & data)
 {
@@ -83,38 +171,24 @@ std::vector<int> PmergeMe::doMergeSort(std::vector<int> & data)
     result = doMergeSort(winners);
 
     std::vector<int> jsSequence = jakop(loosers.size() + 1);
-    std::cout << "JakopStall Seq: " << jsSequence.size() << "  => ";
-    put(jsSequence);
 
-
-    
-    std::cout << "loosers : "; put(loosers); 
     int i = 0;
     int KKK = 0;
     while (i < (int)loosers.size())
     {
-        // std::cout <<"i -> |" << i <<"|"<< loosers.size() << std::endl;
-        // std::chrono::high_resolution_clock::time_point sss = std::chrono::high_resolution_clock::now();
+
         int start = i;
         int end = i + jsSequence[KKK] - 1;
         KKK += 1;
-        // std::chrono::high_resolution_clock::time_point done = std::chrono::high_resolution_clock::now();
-        
-        // std::chrono::microseconds durration = std::chrono::duration_cast<std::chrono::microseconds>(done - sss);
-        // std::cout << "time : " << durration.count() << std::endl;
-        // std::cout << "##### " << i << " + " << jsSequence[i] << " = " << end << std::endl;
-        if (end > (int)loosers.size()) end = loosers.size() - 1; // 
-        // std:: cout << "start: " << start << ", end: " << end << std::endl;
-        // std::cout << "range: ";
-        // for(int tmp = start; tmp <= end; tmp++)
-        //     std::cout << loosers[tmp] << " ";
-        // std::cout << "\n";
+
+        if (end > (int)loosers.size()) end = loosers.size() - 1;
+
         
         i = end + 1;
         while (true)
         {
             
-            //  std::cout <<"j -> |" << end <<"|"<< std::endl;
+
             std::vector<int>::iterator winnerPos = std::find(result.begin(), result.end(), winners[end]);
             std::vector<int>::iterator insertionPoint = std::lower_bound(result.begin(), winnerPos, loosers[end]);
             
@@ -128,7 +202,6 @@ std::vector<int> PmergeMe::doMergeSort(std::vector<int> & data)
         
         
     }
-    // std::cout << std::endl;
     if (leftOver != -1)
     {
         std::vector<int>::iterator insertionPoint = std::lower_bound(result.begin(), result.end(), leftOver);
@@ -158,6 +231,7 @@ void PmergeMe::parseInput(int ac, char **av)
         }
 
         _data.push_back(value);
+        _data2.push_back(value);
     }
 }
 
@@ -167,14 +241,34 @@ void PmergeMe::mergeSort(int ac, char **av){
     try
     {
         parseInput(ac, av);
+
         std::vector<int>::iterator it;
         for(it = _data.begin() ; it < _data.end(); it++)
-            std::cout << "[" << *it << "] " ; 
+            std::cout  << *it << " " ; 
         std::cout << std::endl;
+
+        
+
+        clock_t before = clock();
         std::vector<int> res = doMergeSort(_data);
+        clock_t after = clock();
+        
         for(size_t i = 0; i < res.size(); i++)
             std::cout << res[i] << " ";
         std::cout << std::endl;
+        
+        unsigned int vec_time = after - before / CLOCKS_PER_SEC * 1000000;
+        
+        
+        before = clock();
+        std::deque<int> res2 = doMergeSort(_data2);    
+        after = clock();
+        
+        unsigned int deq_time = after - before / CLOCKS_PER_SEC * 1000000;
+        
+        std::cout << "Time to process a range of " << res2.size() << " elements with std::deque  : " << deq_time << " us" << std::endl;
+        std::cout << "Time to process a range of "<< res.size() << " elements with std::vector : " << vec_time << " us" << std::endl;
+        
     }
     catch(const std::exception& e)
     {

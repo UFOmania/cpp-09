@@ -13,7 +13,6 @@ std::string BitcoinExchange::Date::toStr(){
         ss << "0";
         tmp *= 10;
     }
-    // std::string date('0', zeros);
     ss << year;
    ss << '-';
 
@@ -28,10 +27,7 @@ std::string BitcoinExchange::Date::toStr(){
 
     std::string date;
     ss >> date;
-    // std::cout << "---------\n";
-    // std::cout << year << "-" << month<<'-'<< day<<std::endl;
-    // std::cout << date << std::endl;
-    // std::cout << "++++++++++\n";
+
 
     return date;
 }
@@ -95,7 +91,7 @@ BitcoinExchange::Date BitcoinExchange::validateKey(std::string & key)
 
     std::string finalKey;
 
-    //extraction
+
     size_t delemPos = key.find('-');
     if (delemPos == key.npos || delemPos == 0)
         throw std::runtime_error(std::string ("Bad Input: ") + key);
@@ -113,7 +109,7 @@ BitcoinExchange::Date BitcoinExchange::validateKey(std::string & key)
     if (day.empty())
         throw std::runtime_error(std::string ("Bad Input: ") + key);
 
-    //validation
+
     Date date;
     int tmp;
     std::stringstream ss;
@@ -137,8 +133,6 @@ BitcoinExchange::Date BitcoinExchange::validateKey(std::string & key)
     date.day = tmp;
     ss.clear();
 
-    // std::cout << date.toStr() << std::endl;
-    //save result
     if (isValidDate(date) == false)
         throw std::runtime_error(std::string("Bad Input => ") + key);
 
@@ -170,9 +164,9 @@ void BitcoinExchange::validateDatabaseLine(const std::string & line)
 {
     std::string key;
     std::string value;
-// std::cout << line << std::endl;
+
 size_t delemPos = line.find(',');
-// std::cout << delemPos << std::endl;
+
 
     if (delemPos == line.npos || delemPos == 0 || line.find(',', delemPos + 1) != line.npos)
         throw std::runtime_error("Bad line at data.csv");
@@ -180,7 +174,7 @@ size_t delemPos = line.find(',');
     key = line.substr(0, delemPos);
     value = line.substr(delemPos + 1);
 
-    // std::cout << key << "  " << value << std::endl;
+
 
     if (value.empty())
         throw std::runtime_error("Bad line at data.csv");
@@ -189,7 +183,7 @@ size_t delemPos = line.find(',');
     {
         Date date = validateKey(key);
         double numValue = validateValue(value);
-        // std::cout << key << " | " << numValue << std::endl;
+
         _database[date.toStr()] = numValue;
     }
     _isFirstLine = false;
@@ -243,7 +237,7 @@ void BitcoinExchange::validateInputLine(const std::string & line)
         numAmmount = validateValue(ammount);
         if (numAmmount > 1000)
             throw std::runtime_error("too large a number.");
-        // std::cout << key.toStr() << std::endl;
+            
         std::map<std::string, double>::iterator it = _database.find(key.toStr());
         if (it == _database.end())
         {
@@ -259,9 +253,8 @@ void BitcoinExchange::validateInputLine(const std::string & line)
         else
         {
             std::cout << "not Found\n";
-            // std::cout << date << " => " << ammount << " => " << numAmmount * -1<< ".\n";
         }
-        /* code */
+        
     }
     catch(const std::exception& e)
     {

@@ -4,17 +4,21 @@
 #include <iostream>
 #include <exception>
 #include <vector>
+#include <deque>
 #include <sstream>
 #include <algorithm>
-#include <chrono>
 
 class PmergeMe {
     private:
         static std::vector<int> _data;
+        static std::deque<int> _data2;
         static std::vector<int> jakop(int);
+        static std::deque<int> jakop_deq(int);
         static void parseInput(int ac, char **av);
         static std::vector<int> doMergeSort(std::vector <int> &);
+        static std::deque<int> doMergeSort(std::deque<int> &);
         static int makePairs(const std::vector<int> & org, std::vector<int> & winners, std::vector<int> & loosers);
+        static int makePairs(const std::deque<int> & org, std::deque<int> & winners, std::deque<int> & loosers);
     
         static void makePairs();
         PmergeMe();
@@ -28,4 +32,4 @@ class PmergeMe {
 };
 
 
-#endif //jacopstall
+#endif 

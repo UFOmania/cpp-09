@@ -73,7 +73,6 @@ int RPN::parseFormula(const std::string & str)
 
 void RPN::calculate(const std::string & formula)
 {
-    // parsing
     try{
         if (!parseFormula(formula) || !doCalculate(formula))
             std::cout << "Error: Bad Formula" << std::endl;

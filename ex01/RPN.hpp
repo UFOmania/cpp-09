@@ -11,14 +11,14 @@ class RPN {
         static int parseFormula(const std::string & value);
         static int doCalculate(const std::string & formula);
 
-    
-    public:
         ~RPN();
         RPN();
         RPN(const RPN &);
         RPN &operator=(const RPN &);
+        
+    public:
         static void calculate(const std::string &);
-
+        
 };
 
 #endif
